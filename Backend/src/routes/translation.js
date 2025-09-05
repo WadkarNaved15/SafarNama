@@ -53,9 +53,6 @@ const langMap = {
   tel: "te"    // Telugu
 };
 
-const MONGO_URI = "mongodb+srv://navedwadkar:Naved%40123@instagram.cbzhjlt.mongodb.net/SafarNama?retryWrites=true&w=majority&appName=Instagram";
-
-
 
     // Normalize language code
     const sourceLang = langMap[detectedLang] || "en";
