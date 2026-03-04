@@ -4,7 +4,7 @@ import Package from "../models/Package.js";
 const router = express.Router();
 
 /**
- * @route   GET /api/packages
+ * @route   GET /api/v1/packages
  * @desc    Get all packages (with optional filters)
  * @access  Public
  */
@@ -12,12 +12,14 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const filters = {};
+    console.log("Received query parameters:", req.query);
 
     // Search must also match
     if (req.query.q) {
       filters.$or = [
         { title: { $regex: req.query.q, $options: "i" } },
-        { destination: { $regex: req.query.q, $options: "i" } }
+        { destination: { $regex: req.query.q, $options: "i" } },
+        { description: { $regex: req.query.q, $options: "i" } },
       ];
     }
 
@@ -50,7 +52,7 @@ router.get("/", async (req, res) => {
 
 
 /**
- * @route   GET /api/packages/:id
+ * @route   GET /api/v1/packages/:id
  * @desc    Get a single package by ID
  * @access  Public
  */
@@ -67,7 +69,13 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/:destination", async (req, res) => {
+/**
+ * @route   GET /api/v1/packages/:destination
+ * @desc    Get all the packages for a specific destination
+ * @access  Public
+ */
+
+router.get("/destination/:destination", async (req, res) => {
   try {
     const { destination } = req.params;
 

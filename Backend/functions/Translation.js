@@ -16,7 +16,9 @@ export async function transcribeAudio(filePath) {
     formData.append("file", fs.createReadStream(filePath)); // 👈 audio file
     formData.append("model_id", "scribe_v1");               // 👈 required
     formData.append("tag_audio_events", "true");            // optional
-    formData.append("diarize", "true");                     // optional
+    formData.append("diarize", "true");  
+    console.log("🔑 Using API Key:", ELEVEN_KEY?.slice(0, 6) + "..."); 
+                   // optional
 
     const res = await axios.post(
       "https://api.elevenlabs.io/v1/speech-to-text",

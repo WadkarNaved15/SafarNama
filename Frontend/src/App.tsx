@@ -10,6 +10,9 @@ const DestinationDetail = lazy(() => import('./components/DestinationDetail'));
 const PackageDetail = lazy(() => import('./components/PackageDetail'));
 const AgentDashboard = lazy(() => import('./components/AgentDashboard'));
 const Translator = lazy(() => import('./components/Translator'));
+const LoginPage = lazy(() => import('./Pages/LoginPage'));
+const RegisterPage = lazy(() => import('./Pages/RegisterPage'));
+const BookingsPage = lazy(() => import('./Pages/BookingsPage'));
 
 const App: React.FC = () => {
   return (
@@ -22,6 +25,13 @@ const App: React.FC = () => {
 
           {/* Home page after splash */}
           <Route path="/home" element={<HomePage />} />
+
+          {/* Login page */}
+          <Route path="/login" element={<LoginPage />} />
+          {/* Registration page */}
+          <Route path="/register" element={<RegisterPage />} />
+          {/* Booking page */}
+          <Route path="/my-bookings" element={<BookingsPage />} />
 
           {/* Other routes */}
           <Route path="/search" element={<SearchResults />} />

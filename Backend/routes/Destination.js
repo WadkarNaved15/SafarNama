@@ -6,7 +6,7 @@ import Package from "../models/Package.js";
 const router = express.Router();
 
 /**
- * @route   GET /api/destinations
+ * @route   GET /api/v1/destinations
  * @desc    Get all destinations (with optional query filters)
  * @access  Public
  */
@@ -15,12 +15,16 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const filters = {};
+   const count = await Destination.countDocuments();
+console.log("Number of destinations:", count);
+
 
     // Text search must match as well if provided
     if (req.query.q) {
       filters.$or = [
         { name: { $regex: req.query.q, $options: "i" } },
-        { country: { $regex: req.query.q, $options: "i" } }
+        { country: { $regex: req.query.q, $options: "i" } },
+        { region: { $regex: req.query.q, $options: "i" } },
       ];
     }
 
@@ -53,7 +57,7 @@ console.log("Destination Filters applied:", JSON.stringify(filters, null, 2));
 
 
 /**
- * @route   GET /api/destinations/:id
+ * @route   GET /api/v1/destinations/:id
  * @desc    Get a single destination by ID
  * @access  Public
  */

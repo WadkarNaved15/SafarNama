@@ -34,6 +34,7 @@ router.get("/:id", async (req, res) => {
   try {
     console.log("Fetching agent with ID:", req.params.id);
     const agent = await Agent.findById(req.params.id).populate("packages");
+    console.log("Fetched Agent:", agent);
     if (!agent) {
       return res.status(404).json({ error: "Agent not found" });
     }
@@ -44,7 +45,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// routes/agentRoutes.js
+/**
+ * @route   PUT /api/v1/agents/:agentId/add-package/:packageId
+ * @desc    Link a package to an agent
+ * @access  Public
+ */
 
 router.put("/:agentId/add-package/:packageId", async (req, res) => {
   try {

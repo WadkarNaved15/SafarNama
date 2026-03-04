@@ -9,6 +9,13 @@ fs.mkdirSync("uploads/input_audios", { recursive: true });
 
 const upload = multer({ dest: "uploads/input_audios" });
 
+
+/**
+ * @route   GET /api/v1/translation
+ * @desc    Get Tanslated audio from uploaded audio
+ * @access  Public
+ */
+
 router.post("/", upload.single("audio"), async (req, res) => {
   try {
     if (!req.file) {
@@ -67,7 +74,7 @@ const langMap = {
       });
     }
 
-    // 🌍 Step 2: Decide target language (English <-> Hindi swap for now)
+    // 🌍 Step 2: Decide target language (source <-> target swap for now)
     let targetLang = sourceLang === from ? to : from;
 
     console.log(`🔄 Translation: ${sourceLang} → ${targetLang}`);

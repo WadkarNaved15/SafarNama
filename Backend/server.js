@@ -1,37 +1,44 @@
 import express from "express";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
 import cors from "cors";
-import multer from "multer";
-import TranslationRoutes from "./src/routes/Translation.js";
-import DestinationRoutes from "./src/routes/Destination.js";
-import PackageRoutes from "./src/routes/Package.js";
-import AgentRoutes from "./src/routes/Agent.js";
-import TestimonialRoutes from "./src/routes/Testimonial.js";
+import dotenv from "dotenv";
+import { ethers } from "ethers";
+import { PinataSDK } from "pinata";
+import crypto from "crypto";
+import fs from "fs";
+import { File } from "node:buffer";
+import mongoose from "mongoose";
+import { contractABI } from "./contractABI.js";
+import AuthRouter from "./routes/auth.js";
+import AdminRouter from "./routes/admin.js";
+import DestinationRouter from "./routes/Destination.js";
+import PackageRouter from "./routes/Package.js";
+import TestimonialRouter from "./routes/Testimonial.js";
+import AgentRouter from "./routes/Agent.js";
+import TranslationRouter from "./routes/translation.js";
+import BookingRouter from "./routes/Booking.js";
+import SafeRouteRouter from "./routes/safeRoute.js";
 
 dotenv.config();
-
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
-console.log("🌐 Frontend URL:", FRONTEND_URL);
-
-
 const app = express();
-
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB connected"))
-.catch((err) => console.error("MongoDB connection error:", err));
-
-app.use(cors(
-    { origin: FRONTEND_URL }
-));
+app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/api/v1/translate", TranslationRoutes);
-app.use("/api/v1/destinations", DestinationRoutes);
-app.use("/api/v1/packages", PackageRoutes);
-app.use("/api/v1/agents",AgentRoutes);
-app.use("/api/v1/testimonials",TestimonialRoutes);
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tourist_safety');
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
+
+app.use('/api/v1/auth', AuthRouter);
+app.use('/api/v1/admin', AdminRouter);
+app.use('/api/v1/destinations', DestinationRouter);
+app.use('/api/v1/packages', PackageRouter);
+app.use('/api/v1/testimonials', TestimonialRouter);
+app.use('/api/v1/agents', AgentRouter);
+app.use('/api/v1/translation', TranslationRouter);
+app.use('/api/v1/bookings', BookingRouter);
+app.use('/api/v1/safe-route', SafeRouteRouter);
+
+
+
+app.listen(4000, () => console.log("✅ Backend running on port 4000"));
