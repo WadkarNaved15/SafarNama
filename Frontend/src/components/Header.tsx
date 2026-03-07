@@ -134,15 +134,52 @@ export default function Header() {
       </div>
 
       {/* Mobile Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-4">
-          <a href="#destinations" className="block text-gray-700 font-medium">Destinations</a>
-          <a href="#packages" className="block text-gray-700 font-medium">Packages</a>
-          <button onClick={() => navigate("/login")} className="block w-full text-left text-blue-600 font-bold">
-            {isLoggedIn ? 'Dashboard' : 'Sign In'}
-          </button>
-        </div>
-      )}
+{mobileMenuOpen && (
+  <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-4">
+    
+    <a href="#destinations" className="block text-gray-700 font-medium">
+      Destinations
+    </a>
+
+    <a href="#packages" className="block text-gray-700 font-medium">
+      Packages
+    </a>
+
+    {/* Safe Route */}
+    <button
+      onClick={() => {
+        navigate("/safe-route");
+        setMobileMenuOpen(false);
+      }}
+      className="block w-full text-left text-gray-700 font-medium hover:text-sky-600"
+    >
+      Safe Route
+    </button>
+
+    {/* Translator */}
+    <button
+      onClick={() => {
+        navigate("/translate");
+        setMobileMenuOpen(false);
+      }}
+      className="block w-full text-left text-gray-700 font-medium hover:text-sky-600"
+    >
+      Translator
+    </button>
+
+    {/* Auth Button */}
+    <button
+      onClick={() => {
+        navigate(isLoggedIn ? "/dashboard" : "/login");
+        setMobileMenuOpen(false);
+      }}
+      className="block w-full text-left text-blue-600 font-bold"
+    >
+      {isLoggedIn ? "Dashboard" : "Sign In"}
+    </button>
+
+  </div>
+)}
     </header>
   );
 }
