@@ -70,6 +70,12 @@ export default function Header() {
 
           {/* Right Section */}
           <div className="flex items-center space-x-3 sm:space-x-4">
+            <button
+              onClick={() => navigate("/safe-route")}
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm rounded-md bg-sky-50 text-sky-600 font-medium border border-sky-200 hover:bg-sky-100 transition-all hidden sm:flex"
+            >
+              <span>Safe Route</span>
+            </button>
             
             {/* AI Translator Button (Icon only on small mobile) */}
             <button
