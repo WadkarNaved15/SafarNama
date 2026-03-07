@@ -3,8 +3,7 @@ import { GoogleMap, Polyline, Marker, useJsApiLoader } from '@react-google-maps/
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// Environment variables in React Web (Vite uses import.meta.env, Create React App uses process.env)
-const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000/api/v1';
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 // --- TYPES ---
@@ -24,7 +23,7 @@ interface RouteData {
 }
 
 // ==================================================
-// 1. HELPER: DECODE POLYLINE (Adapted for web {lat, lng})
+// 1. HELPER: DECODE POLYLINE
 // ==================================================
 const decodePolyline = (encoded: string): Coordinate[] => {
   if (!encoded) return [];
@@ -50,13 +49,11 @@ const SafeRouteScreen: React.FC = () => {
   const mapRef = useRef<google.maps.Map | null>(null);
   const navigate = useNavigate();
 
-  // Load Google Maps Script
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
   });
 
-  // --- STATE ---
   const [origin, setOrigin] = useState<string>('');
   const [destination, setDestination] = useState<string>('');
   const [routes, setRoutes] = useState<RouteData[]>([]);
@@ -64,9 +61,8 @@ const SafeRouteScreen: React.FC = () => {
   const [addressLoading, setAddressLoading] = useState<boolean>(false);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
 
-  const defaultCenter = { lat: 19.0760, lng: 72.8777 }; // Mumbai
+  const defaultCenter = { lat: 19.0760, lng: 72.8777 }; 
 
-  // --- MAP INIT ---
   const onLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
   }, []);
@@ -75,72 +71,65 @@ const SafeRouteScreen: React.FC = () => {
     mapRef.current = null;
   }, []);
 
-  // --- REUSABLE FUNCTION: REVERSE GEOCODE ---
   const fillAddressFromCoordinates = async (lat: number, lng: number) => {
     if (!isLoaded) return;
-    
     try {
-      // 1. Zoom Map to location
       if (mapRef.current) {
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(15);
       }
-
-      // 2. Convert to Address Name using Web Geocoder
       const geocoder = new window.google.maps.Geocoder();
       const response = await geocoder.geocode({ location: { lat, lng } });
-      
       if (response.results[0]) {
         setOrigin(response.results[0].formatted_address);
       } else {
         setOrigin(`${lat}, ${lng}`);
       }
     } catch (error) {
-      console.warn("Geocoding Error:", error);
       setOrigin(`${lat}, ${lng}`);
     } finally {
       setAddressLoading(false);
     }
   };
 
-  // --- FETCH DIRECT LOCATION VIA BROWSER API ---
   const fetchCurrentLocation = () => {
     setAddressLoading(true);
-
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       setAddressLoading(false);
       return;
     }
-
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        fillAddressFromCoordinates(latitude, longitude);
-      },
+      (position) => fillAddressFromCoordinates(position.coords.latitude, position.coords.longitude),
       (error) => {
-        console.warn("Geolocation Error:", error.message);
-        alert("Could not fetch location. Please check your browser permissions.");
+        alert("Could not fetch location.");
         setAddressLoading(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
-  // --- EFFECT: ON LOAD (Automatic) ---
   useEffect(() => {
-    if (isLoaded) {
-      fetchCurrentLocation();
-    }
+    if (isLoaded) fetchCurrentLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
 
-  // --- BUTTON HANDLER: MANUAL CLICK ---
-  const handleGetCurrentLocation = () => {
-    fetchCurrentLocation();
+  // --- MAP ZOOMING HELPER ---
+  const focusOnRoute = (coordinates: Coordinate[]) => {
+    if (coordinates.length > 0 && mapRef.current) {
+      const bounds = new window.google.maps.LatLngBounds();
+      coordinates.forEach(coord => bounds.extend(coord));
+      
+      // Add padding so the top search card and bottom info card don't overlap the route!
+      mapRef.current.fitBounds(bounds, {
+        top: 280,    // Leaves space for the search card
+        bottom: 250, // Leaves space for the stats card
+        left: 50,
+        right: 50
+      });
+    }
   };
 
-  // --- API CALL: FETCH ROUTES ---
   const fetchSafeRoutes = async () => {
     if (!origin || !destination) {
       alert("Please enter both Start and Destination.");
@@ -150,8 +139,7 @@ const SafeRouteScreen: React.FC = () => {
     setRoutes([]); 
 
     try {
-      const API_URL = `${BACKEND_URI}/api/v1/safe-route/`; 
-      const response = await axios.post(API_URL, { origin, destination });
+      const response = await axios.post(`${BACKEND_URI}/api/v1/safe-route`, { origin, destination });
 
       if (response.data.success && response.data.routes.length > 0) {
         const fetchedRoutes: RouteData[] = response.data.routes.map((route: any) => ({
@@ -162,17 +150,13 @@ const SafeRouteScreen: React.FC = () => {
         setRoutes(fetchedRoutes);
         setSelectedRouteIndex(0);
 
-        // Fit map to bounds of the first route
-        if (fetchedRoutes[0].coordinates.length > 0 && mapRef.current) {
-            const bounds = new window.google.maps.LatLngBounds();
-            fetchedRoutes[0].coordinates.forEach(coord => bounds.extend(coord));
-            mapRef.current.fitBounds(bounds);
-        }
+        // Zoom to the newly fetched route
+        focusOnRoute(fetchedRoutes[0].coordinates);
+
       } else {
         alert("Could not find any routes.");
       }
     } catch (error) {
-      console.error("API Error:", error);
       alert("Failed to connect to backend.");
     } finally {
       setLoading(false);
@@ -183,23 +167,16 @@ const SafeRouteScreen: React.FC = () => {
     if (routes.length === 0) return;
     const nextIndex = (selectedRouteIndex + 1) % routes.length;
     setSelectedRouteIndex(nextIndex);
-    const nextRoute = routes[nextIndex];
     
-    if (mapRef.current && nextRoute) {
-        const bounds = new window.google.maps.LatLngBounds();
-        nextRoute.coordinates.forEach(coord => bounds.extend(coord));
-        mapRef.current.fitBounds(bounds);
-    }
+    // Zoom to the alternative route
+    focusOnRoute(routes[nextIndex].coordinates);
   };
 
   const startNavigation = () => {
     const currentRoute = routes[selectedRouteIndex];
     if (!currentRoute) return;
-    const coords = currentRoute.coordinates;
-    const dest = coords[coords.length - 1];
-    const mid = coords[Math.floor(coords.length / 2)];
-
-    // Standard Google Maps Web URL
+    const dest = currentRoute.coordinates[currentRoute.coordinates.length - 1];
+    const mid = currentRoute.coordinates[Math.floor(currentRoute.coordinates.length / 2)];
     const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${dest.lat},${dest.lng}&waypoints=${mid.lat},${mid.lng}&travelmode=driving`;
     window.open(url, '_blank');
   };
@@ -264,14 +241,14 @@ const SafeRouteScreen: React.FC = () => {
         </GoogleMap>
       </div>
 
-      {/* SEARCH CARD - Overlaid on Top */}
+      {/* SEARCH CARD (UI Overlay) */}
       <div style={styles.searchCardWrapper}>
         <div style={styles.searchCard}>
             <div style={styles.headerRow}>
                 <button onClick={() => navigate(-1)} style={styles.backButton}>
-                <span style={styles.backArrow}>←</span>
+                  <span style={styles.backArrow}>←</span>
                 </button>
-                <span style={styles.headerTitle}>HerShield Safe Route</span>
+                <span style={styles.headerTitle}>Safe Route</span>
                 <div style={{width: 40}} />
             </div>
             
@@ -281,9 +258,7 @@ const SafeRouteScreen: React.FC = () => {
                     <div style={styles.dashedLine} />
                     <div style={{...styles.dot, backgroundColor: '#EF4444'}} />
                 </div>
-
                 <div style={styles.inputsColumn}>
-                    {/* GPS ROW */}
                     <div style={styles.inputWithIconRow}>
                         <input 
                             style={{...styles.input, flex: 1}} 
@@ -291,17 +266,11 @@ const SafeRouteScreen: React.FC = () => {
                             value={origin}
                             onChange={(e) => setOrigin(e.target.value)}
                         />
-                        <button 
-                            style={styles.gpsButton} 
-                            onClick={handleGetCurrentLocation} 
-                            disabled={addressLoading}
-                        >
+                        <button style={styles.gpsButton} onClick={fetchCurrentLocation} disabled={addressLoading}>
                             {addressLoading ? '⏳' : '📍'}
                         </button>
                     </div>
-
                     <div style={styles.divider} />
-                    
                     <input 
                         style={styles.input} 
                         placeholder="Destination" 
@@ -310,7 +279,6 @@ const SafeRouteScreen: React.FC = () => {
                     />
                 </div>
             </div>
-
             <button style={styles.goButton} onClick={fetchSafeRoutes} disabled={loading}>
                 {loading ? 'Loading...' : 'Find Safe Routes'}
             </button>
@@ -323,9 +291,7 @@ const SafeRouteScreen: React.FC = () => {
           <div style={styles.routeHeader}>
             <div>
               <div style={styles.routeLabel}>ROUTE {selectedRouteIndex + 1} OF {routes.length}</div>
-              <div style={styles.routeSummary} title={selectedRoute.summary}>
-                {selectedRoute.summary}
-              </div>
+              <div style={styles.routeSummary} title={selectedRoute.summary}>{selectedRoute.summary}</div>
             </div>
             <div style={{...styles.safetyBadge, backgroundColor: selectedRoute.risk_level === 'Safe' ? '#ECFDF5' : '#FEF2F2' }}>
                 <span style={{...styles.safetyText, color: selectedRoute.risk_level === 'Safe' ? '#059669' : '#DC2626' }}>
@@ -353,15 +319,10 @@ const SafeRouteScreen: React.FC = () => {
 
           <div style={styles.actionButtonsRow}>
             {routes.length > 1 && (
-                <button style={styles.altRouteButton} onClick={selectNextRoute}>
-                    Alternative
-                </button>
+                <button style={styles.altRouteButton} onClick={selectNextRoute}>Alternative</button>
             )}
             <button 
-                style={{
-                    ...styles.startNavButton, 
-                    ...(routes.length > 1 ? { flex: 1.5, marginLeft: '10px' } : { width: '100%' })
-                }}
+                style={{...styles.startNavButton, ...(routes.length > 1 ? { flex: 1.5, marginLeft: '10px' } : { width: '100%' })}}
                 onClick={startNavigation}
             >
                 Start Navigation
@@ -374,7 +335,7 @@ const SafeRouteScreen: React.FC = () => {
 };
 
 // ==================================================
-// STYLES (Converted to Web CSS-in-JS)
+// STYLES
 // ==================================================
 const styles: { [key: string]: React.CSSProperties } = {
   container: { position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', backgroundColor: '#fff', fontFamily: 'system-ui, sans-serif' },
@@ -397,7 +358,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   gpsButton: { background: 'none', border: 'none', cursor: 'pointer', padding: '10px' },
   input: { height: '48px', padding: '0 16px', fontSize: '15px', color: '#111827', backgroundColor: '#F9FAFB', border: 'none', outline: 'none', width: '100%', boxSizing: 'border-box' },
   divider: { height: '1px', backgroundColor: '#E5E7EB', margin: '0 16px' },
-  goButton: { width: '100%', backgroundColor: '#111827', color: 'white', border: 'none', borderRadius: '14px', height: '52px', cursor: 'pointer', fontSize: '16px', fontWeight: '700', boxShadow: '0 4px 8px rgba(17,24,39,0.2)' },
+  goButton: { width: '100%', backgroundColor: '#0284c7', color: 'white', border: 'none', borderRadius: '14px', height: '52px', cursor: 'pointer', fontSize: '16px', fontWeight: '700', boxShadow: '0 4px 12px rgba(2,132,199,0.3)' },
   
   bottomCard: { position: 'absolute', bottom: '30px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '400px', backgroundColor: 'white', borderRadius: '24px', padding: '20px', boxShadow: '0 8px 20px rgba(0,0,0,0.15)', zIndex: 10 },
   routeHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
