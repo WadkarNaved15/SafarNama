@@ -2,9 +2,8 @@ import axios from 'axios';
 
 import 'dotenv/config';
 
-const PYTHON_API_URL = 'http://127.0.0.1:5001/predict_safety';
+const PYTHON_API_URL = `${process.env.PYTHON_API_URL}/predict_safety` || 'http://localhost:5001/predict_safety';
 const GOOGLE_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-console.log("DEBUG: API Key is ->", process.env.GOOGLE_MAPS_API_KEY);
 
 // ==========================================
 // 1. HELPER: Fetch Routes from Google
