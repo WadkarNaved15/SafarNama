@@ -139,7 +139,7 @@ const SafeRouteScreen: React.FC = () => {
     setRoutes([]); 
 
     try {
-      const response = await axios.post(`${SAFEROUTE_API_URL}/api/v1/safe-route`, { origin, destination });
+      const response = await axios.post(`${SAFEROUTE_API_URL}/safeRoute`, { origin, destination });
 
       if (response.data.success && response.data.routes.length > 0) {
         const fetchedRoutes: RouteData[] = response.data.routes.map((route: any) => ({
