@@ -15,7 +15,9 @@
     "nodemon": "^3.1.10"
   },
   "dependencies": {
-    
+    "@langchain/core": "^1.1.31",
+    "@langchain/google-genai": "^2.1.24",
+    "@langchain/langgraph": "^1.2.1",
     "@mapbox/polyline": "^1.2.1",
     "axios": "^1.13.4",
     "bcryptjs": "^3.0.2",
@@ -31,6 +33,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.2",
     "multer": "^2.0.2",
-    "pinata": "^2.5.0"
+    "pinata": "^2.5.0",
+    "socket.io": "^4.8.3"
   }
 }

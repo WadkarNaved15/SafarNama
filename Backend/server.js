@@ -17,6 +17,13 @@ import AgentRouter from "./routes/Agent.js";
 import TranslationRouter from "./routes/translation.js";
 import BookingRouter from "./routes/Booking.js";
 import SafeRouteRouter from "./routes/safeRoute.js";
+import ChatRouter from "./routes/chat.js";
+
+
+
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { initializeSocket } from "./sockets/socket.server.js";
 
 dotenv.config();
 const app = express();
@@ -38,7 +45,16 @@ app.use('/api/v1/agents', AgentRouter);
 app.use('/api/v1/translation', TranslationRouter);
 app.use('/api/v1/bookings', BookingRouter);
 app.use('/api/v1/safe-route', SafeRouteRouter);
+app.use('/api/v1/chat', ChatRouter);
 
 
 
-app.listen(4000, () => console.log("✅ Backend running on port 4000"));
+const httpServer = createServer(app);
+
+
+ initializeSocket(httpServer);
+
+
+
+httpServer.listen(4000, () => console.log("✅ Backend running on port 4000"));
+
