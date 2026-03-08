@@ -66,7 +66,7 @@ const languages = [
 
         try {
           const res = await axios.post(
-            `${BACKEND_URL}/api/v1/translate`,
+            `${BACKEND_URL}/api/v1/translation`,
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
