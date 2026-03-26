@@ -18,6 +18,7 @@ import TranslationRouter from "./routes/translation.js";
 import BookingRouter from "./routes/Booking.js";
 import SafeRouteRouter from "./routes/safeRoute.js";
 import ChatRouter from "./routes/chat.js";
+import uploadRoutes from "./routes/imageUpload.js";
 
 
 
@@ -46,6 +47,7 @@ app.use('/api/v1/translation', TranslationRouter);
 app.use('/api/v1/bookings', BookingRouter);
 app.use('/api/v1/safe-route', SafeRouteRouter);
 app.use('/api/v1/chat', ChatRouter);
+app.use("/api/v1/upload", uploadRoutes);
 
 
 
