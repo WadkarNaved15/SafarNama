@@ -22,6 +22,7 @@ export const initializeSocket = (httpServer) => {
         if (!chatId || !content) {
           return socket.emit("error", { message: "chatId and content are required." });
         }
+        
 
         // 1. Save User's message to MongoDB
         await messageModel.create({
@@ -39,6 +40,7 @@ export const initializeSocket = (httpServer) => {
 
         // Sort chronologically for the AI context
         recentMessages.reverse(); 
+        console.log("Recent messages for chat context:", recentMessages);
 
         // 3. Format DB messages into LangChain message objects
         const langChainMessages = recentMessages.map(msg => {
@@ -46,6 +48,8 @@ export const initializeSocket = (httpServer) => {
             ? new AIMessage(msg.content) 
             : new HumanMessage(msg.content);
         });
+        // After recentMessages.reverse()
+        
 
         // 4. Pass the array of LangChain messages to your LangGraph function
         const aiResponseText = await generateResponse(langChainMessages);
