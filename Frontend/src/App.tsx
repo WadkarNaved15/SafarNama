@@ -14,6 +14,7 @@ const LoginPage = lazy(() => import('./Pages/LoginPage'));
 const RegisterPage = lazy(() => import('./Pages/RegisterPage'));
 const BookingsPage = lazy(() => import('./Pages/BookingsPage'));
 const SafeRoute = lazy(() => import('./Pages/SafeRoute'));
+const ChatPage = lazy(() => import('./Pages/ChatPage'));
 
 const App: React.FC = () => {
   return (
@@ -41,7 +42,7 @@ const App: React.FC = () => {
           <Route path="/agent" element={<AgentDashboard />} />
           <Route path="/translate" element={<Translator />} />
           <Route path="/safe-route" element={<SafeRoute />} />
-          
+          <Route path="/chat" element={<ChatPage />} />
         </Routes>
       </Suspense>
     </Router>
