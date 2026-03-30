@@ -363,17 +363,17 @@ const PackageDetail: React.FC = () => {
               </div>
               <div className="text-right">
                 <div className="text-3xl font-bold text-white mb-1">
-                  ${packageData.price}
+                  ₹{packageData.price}
                   {packageData.originalPrice && (
                     <span className="text-xl text-gray-300 line-through ml-2">
-                      ${packageData.originalPrice}
+                      ₹{packageData.originalPrice}
                     </span>
                   )}
                 </div>
                 <div className="text-white opacity-80">per person</div>
                 {savings > 0 && (
                   <div className="text-green-400 text-sm font-medium">
-                    Save ${packageData.originalPrice! - packageData.price}
+                    Save ₹{packageData.originalPrice! - packageData.price}
                   </div>
                 )}
               </div>
@@ -572,15 +572,15 @@ const PackageDetail: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6 sticky top-8">
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-green-600">${packageData.price}</span>
+                  <span className="text-2xl font-bold text-green-600">₹{packageData.price}</span>
                   {packageData.originalPrice && (
-                    <span className="text-lg text-gray-500 line-through">${packageData.originalPrice}</span>
+                    <span className="text-lg text-gray-500 line-through">₹{packageData.originalPrice}</span>
                   )}
                 </div>
                 <p className="text-gray-600">per person</p>
                 {savings > 0 && (
                   <p className="text-green-600 text-sm font-medium">
-                    Save ${packageData.originalPrice! - packageData.price} per person
+                    Save ₹{packageData.originalPrice! - packageData.price} per person
                   </p>
                 )}
               </div>
@@ -596,7 +596,7 @@ const PackageDetail: React.FC = () => {
                     <option value="">Choose a date</option>
                     {packageData.availability.map((slot) => (
                       <option key={slot.date} value={slot.date} disabled={!slot.available}>
-                        {new Date(slot.date).toLocaleDateString()} - ${slot.price}
+                        {new Date(slot.date).toLocaleDateString()} - ₹{slot.price}
                         {!slot.available && ' (Sold Out)'}
                       </option>
                     ))}
@@ -619,12 +619,12 @@ const PackageDetail: React.FC = () => {
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-gray-600">Total ({guests} guests)</span>
-                  <span className="font-medium">${totalPrice.toLocaleString()}</span>
+                  <span className="font-medium">₹{totalPrice.toLocaleString()}</span>
                 </div>
                 {savings > 0 && (
                   <div className="flex justify-between items-center text-green-600">
                     <span>You Save</span>
-                    <span>-${savings.toLocaleString()}</span>
+                    <span>-₹{savings.toLocaleString()}</span>
                   </div>
                 )}
               </div>
@@ -639,7 +639,7 @@ const PackageDetail: React.FC = () => {
                 }}
                 className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors mb-3"
               >
-                Book Now - ${totalPrice.toLocaleString()}
+                Book Now - ₹{totalPrice.toLocaleString()}
               </button>
 
               <button className="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors">

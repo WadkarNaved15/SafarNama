@@ -345,7 +345,7 @@ const AgentDashboard: React.FC = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${stats.totalRevenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">₹{stats.totalRevenue.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -437,7 +437,7 @@ const AgentDashboard: React.FC = () => {
                             <span className="text-sm">{pkg.rating}</span>
                             <span className="text-xs text-gray-500 ml-1">({pkg.reviews})</span>
                           </div>
-                          <div className="text-lg font-bold text-green-600">${pkg.price}</div>
+                          <div className="text-lg font-bold text-green-600">₹{pkg.price}</div>
                         </div>
                         
                         <div className="flex items-center justify-between text-sm">
@@ -489,7 +489,7 @@ const AgentDashboard: React.FC = () => {
                         <p className="text-xs text-gray-500">Departure: {booking.date}</p>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-bold text-green-600">${booking.amount}</div>
+                        <div className="text-lg font-bold text-green-600">₹{booking.amount}</div>
                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                           booking.status === 'Confirmed' 
                             ? 'bg-green-50 text-green-700' 
@@ -515,7 +515,7 @@ const AgentDashboard: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-gray-50 rounded-lg p-6">
                     <h4 className="font-medium text-gray-900 mb-4">Monthly Revenue</h4>
-                    <div className="text-3xl font-bold text-green-600 mb-2">$24,580</div>
+                    <div className="text-3xl font-bold text-green-600 mb-2">₹24,580</div>
                     <div className="flex items-center text-sm text-green-600">
                       <TrendingUp className="w-4 h-4 mr-1" />
                       +12% from last month
