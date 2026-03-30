@@ -3,7 +3,7 @@ import { GoogleMap, Polyline, Marker, useJsApiLoader } from '@react-google-maps/
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const SAFEROUTE_API_URL = import.meta.env.VITE_SAFEROUTE_API_URL || 'http://localhost:3000';
+const SAFEROUTE_API_URL = import.meta.env.VITE_SAFEROUTE_API_URL || 'https://hershield.nexie.in';
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 // --- TYPES ---
@@ -140,7 +140,7 @@ const SafeRouteScreen: React.FC = () => {
 
     try {
       const response = await axios.post(`${SAFEROUTE_API_URL}/safeRoute`, { origin, destination });
-
+      console.log("API Response:", response.data); // Debug log
       if (response.data.success && response.data.routes.length > 0) {
         const fetchedRoutes: RouteData[] = response.data.routes.map((route: any) => ({
             ...route,
