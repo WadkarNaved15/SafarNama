@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   Plus, Edit, Trash2, Eye, Star, MapPin, Calendar, 
-  Users, DollarSign, TrendingUp, Package, Settings,
+  Users, DollarSign,IndianRupee, TrendingUp, Package, Settings,
  Save, X, CheckCircle, AlertCircle
 } from 'lucide-react';
 import { Package as PackageType, Agent } from '../types';
@@ -341,7 +341,7 @@ const AgentDashboard: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center">
               <div className="p-3 bg-yellow-50 rounded-lg">
-                <DollarSign className="w-6 h-6 text-yellow-600" />
+                <IndianRupee className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
