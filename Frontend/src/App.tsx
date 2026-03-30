@@ -13,6 +13,7 @@ const Translator = lazy(() => import('./components/Translator'));
 const LoginPage = lazy(() => import('./Pages/LoginPage'));
 const RegisterPage = lazy(() => import('./Pages/RegisterPage'));
 const BookingsPage = lazy(() => import('./Pages/BookingsPage'));
+const BookingDetail = lazy(() => import('./components/BookingDetail'));
 const SafeRoute = lazy(() => import('./Pages/SafeRoute'));
 const ChatPage = lazy(() => import('./Pages/ChatPage'));
 
@@ -34,6 +35,7 @@ const App: React.FC = () => {
           <Route path="/register" element={<RegisterPage />} />
           {/* Booking page */}
           <Route path="/my-bookings" element={<BookingsPage />} />
+          <Route path="/booking/:bookingId" element={<BookingDetail />} />
 
           {/* Other routes */}
           <Route path="/search" element={<SearchResults />} />

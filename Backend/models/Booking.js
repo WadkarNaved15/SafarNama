@@ -82,7 +82,7 @@ const bookingSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['card', 'upi', 'netbanking', 'wallet'],
+    enum: ['card', 'upi', 'netbanking', 'wallet','razorpay'],
   },
   transactionId: String,
   // Status
