@@ -34,7 +34,7 @@ export default function TravelPackages({ travelPackages, handleBookPackage }: { 
                 />
                 {pkg.originalPrice && (
                   <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    Save ${pkg.originalPrice - pkg.price}
+                    Save ₹{pkg.originalPrice - pkg.price}
                   </div>
                 )}
                 <div className="absolute top-4 right-4 flex space-x-2">
@@ -70,9 +70,9 @@ export default function TravelPackages({ travelPackages, handleBookPackage }: { 
                 {/* Price */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
-                    <span className="text-2xl font-bold text-sky-600">${pkg.price}</span>
+                    <span className="text-2xl font-bold text-sky-600">₹{pkg.price}</span>
                     {pkg.originalPrice && (
-                      <span className="text-lg text-gray-400 line-through">${pkg.originalPrice}</span>
+                      <span className="text-lg text-gray-400 line-through">₹{pkg.originalPrice}</span>
                     )}
                     <span className="text-sm text-gray-500">per person</span>
                   </div>
@@ -123,7 +123,7 @@ export default function TravelPackages({ travelPackages, handleBookPackage }: { 
                   onClick={() => handleBookPackage(pkg._id)}
                   className="w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white py-3 rounded-xl hover:from-sky-600 hover:to-blue-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  Book Now - ${pkg.price}
+                  Book Now - ₹{pkg.price}
                 </button>
               </div>
             </div>

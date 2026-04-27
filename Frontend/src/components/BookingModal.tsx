@@ -93,7 +93,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                     value={slot.date}
                     disabled={!slot.available}
                   >
-                    {new Date(slot.date).toLocaleDateString()} - $
+                    {new Date(slot.date).toLocaleDateString()} - ₹
                     {slot.price}
                     {!slot.available && " (Sold Out)"}
                   </option>
@@ -188,19 +188,19 @@ const BookingModal: React.FC<BookingModalProps> = ({
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Package Price ({guests} guests)</span>
-                  <span>${totalPrice.toLocaleString()}</span>
+                  <span>₹{totalPrice.toLocaleString()}</span>
                 </div>
 
                 {savings > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>You Save</span>
-                    <span>- ${savings.toLocaleString()}</span>
+                    <span>- ₹{savings.toLocaleString()}</span>
                   </div>
                 )}
 
                 <div className="border-t pt-2 flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${totalPrice.toLocaleString()}</span>
+                  <span>₹{totalPrice.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -233,7 +233,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
             >
               {bookingLoading
                 ? "Booking..."
-                : `Confirm Booking - $${totalPrice.toLocaleString()}`}
+                : `Confirm Booking - ₹${totalPrice.toLocaleString()}`}
             </button>
           </form>
         </div>

@@ -147,22 +147,17 @@ const PackageDetail: React.FC = () => {
 
       const { order } = orderRes.data;
 
-      // ── Step 3: Open Razorpay checkout ───────────────────────────────────────
-      // bookingLoading stays true while the modal is open so the "Confirm" button
-      // remains disabled and can't be double-clicked.
       await new Promise<void>((resolve, reject) => {
         const rzp = new window.Razorpay({
           key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-          amount: order.amount,           // paise — already set by backend
+          amount: order.amount,          
           currency: order.currency,
           name: "SafarNama",
           description: packageData?.title || "Travel Package",
           order_id: order.id,
 
-          // ── Fires ONLY on successful payment ──────────────────────────────────
           handler: async (response: RazorpayResponse) => {
             try {
-              // ── Step 4: Verify payment + atomically create booking ─────────────
               const verifyRes = await axios.post(
                 `${BACKEND_URL}/api/v1/bookings/verify-payment`,
                 {
@@ -594,12 +589,20 @@ const PackageDetail: React.FC = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
                     <option value="">Choose a date</option>
-                    {packageData.availability.map((slot) => (
-                      <option key={slot.date} value={slot.date} disabled={!slot.available}>
-                        {new Date(slot.date).toLocaleDateString()} - ₹{slot.price}
-                        {!slot.available && ' (Sold Out)'}
-                      </option>
-                    ))}
+                    {Array.from({ length: 14 }).map((_, i) => {
+                      const d = new Date();
+                      d.setDate(d.getDate() + i);
+                      
+                      // Format as YYYY-MM-DD for the value, and local string for display
+                      const dateValue = d.toISOString().split('T')[0];
+                      const dateDisplay = d.toLocaleDateString();
+
+                      return (
+                        <option key={dateValue} value={dateValue}>
+                          {dateDisplay} - ₹{packageData.price}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
                 <div>
